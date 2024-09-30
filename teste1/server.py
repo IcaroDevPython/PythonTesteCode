@@ -3,18 +3,18 @@ import ssl
 
 def start_proxy(port):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('0.0.0.0', port))
+    server_socket.bind(('', port))
     server_socket.listen(5)
-    print(f"Proxy rodando em http://0.0.0.0:{port}...")
+    print(f"\033[33mProxy rodando em http://0.0.0.0:{port}\033[m")
 
     while True:
         client_socket, addr = server_socket.accept()
-        print(f"Conexão de {addr}")
+        print(f"\033[32m>>> Conexão de {addr}\033[m")
         handle_client(client_socket)
 
 def handle_client(client_socket):
     request = client_socket.recv(4096).decode()
-    print(f"Solicitação recebida:\n{request}")
+    print(f"\033[34m\t> Solicitação recebida:\n{request}\033[m".replace("\n","\n\t"))
 
     lines = request.splitlines()
     if len(lines) > 0:
