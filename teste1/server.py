@@ -45,7 +45,7 @@ def handle_tunnel(sock):
     pass
 
 if __name__ == '__mai__'
-"""
+
 
 import socket
 
@@ -89,6 +89,60 @@ def handle_client(client_socket):
 
         # Enviar resposta de volta ao cliente
         client_socket.send(response)
+    
+    client_socket.close()
+
+if __name__ == "__main__":
+    start_proxy(8888)
+"""
+
+import socket
+import ssl
+
+def start_proxy(port):
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('0.0.0.0', port))
+    server_socket.listen(5)
+    print(f"Proxy rodando em http://0.0.0.0:{port}...")
+nt(client_socket):
+    request = client_socket.recv(4096).decode()
+    print(f"Solicitação recebida:\n{request}")
+
+    lines = request.splitlines()
+    if len(lines) > 0:
+        first_line = lines[0].split()
+        method = first_line[0]
+        url = first_line[1]
+
+        if url.startswith("http://"):
+            url = url[7:]
+            port = 80
+        elif url.startswith("https://"):
+            url = url[8:]
+            port = 443
+        else:
+            client_socket.close()
+            return
+
+        host, path = (url.split('/', 1) + [''])[:2]
+
+        try:
+            # Conectar ao servidor de destino
+            target_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            if port == 443:
+                target_socket = ssl.wrap_socket(target_socket)
+            target_socket.connect((host, port))
+            target_socket.send(f"{method} /{path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n".encode())
+
+            # Receber resposta do servidor de destino
+            response = target_socket.recv(4096)
+            target_socket.close()
+
+            # Enviar resposta de volta ao cliente
+            client_socket.send(response)
+        except socket.gaierror:
+            print(f"Erro ao conectar com o host: {host}")
+            client_socket.send(b"HTTP/1.1 502 Bad Gateway\r\n\r\n")
     
     client_socket.close()
 
