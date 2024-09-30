@@ -16,7 +16,7 @@ def start_proxy(port):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('0.0.0.0', port))
     server_socket.listen(5)
-    logging.info(f"Proxy rodando em {socket.gethostname()}:{port}")
+    logging.info(f"Proxy rodando em {socket.gethostbyname(socket.gethostname())}:{port}")
 
     while True:
         client_socket, addr = server_socket.accept()
