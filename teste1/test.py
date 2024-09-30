@@ -11,10 +11,12 @@ class Log:
         print(f"\033[1;31m{msg}\033[m")
 
 logging = Log()
+HOST = "0.0.0.0"
+PORT = 8080
 
-def start_proxy(port):
+def start_proxy(host, port):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('0.0.0.0', port))
+    server_socket.bind((host, port))
     server_socket.listen(5)
     logging.info(f"Proxy rodando em {socket.gethostbyname(socket.gethostname())}:{port}")
 
@@ -103,9 +105,9 @@ def _read_write(client_socket, target_socket):
                     out = client_socket
                 if data:
                     out.send(data)
-                    print(len(data))
+                    #print(len(data))
                     count = 0
-        print("... > ", count)
+        #print("... > ", count)
         if count == 1: #time_out_max
             break
 
@@ -122,7 +124,7 @@ def tunnel_connection(client_socket, target_socket):
     client_socket.close()
 
 def main():
-    start_proxy(8888)
+    start_proxy(HOST, PORT)
 
 if __name__ == "__main__":
     main()
