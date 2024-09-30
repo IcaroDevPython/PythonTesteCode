@@ -1,51 +1,5 @@
 import socket
-import threading
-
-app = Flask(__name__)
-
-@app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT'])
-def proxy():
-    if request.method == 'CONNECT':
-        return handle_connect()
-    
-    url = request.args.get('url')
-    if not url:
-        return "URL parameter is required", 400
-
-    try:
-        req_method = request.method
-        resp = requests.request(req_method, url, json=request.get_json(), headers=request.headers)
-        return Response(resp.content, status=resp.status_code, headers=dict(resp.headers))
-    except requests.exceptions.RequestException as e:
-        return str(e), 500
-
-def handle_connect():
-    target = request.path  # Espera-se que a URL seja no formato "host:porta"
-    
-    try:
-        # Cria um socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((target.split(':')[0], int(target.split(':')[1])))
-        
-        # Responde ao cliente que a conexão foi estabelecida
-        response = 'HTTP/1.1 200 Connection Established\r\n\r\n'
-        request.environ.get('wsgi.input').sendall(response.encode())
-        
-        # Redireciona o socket em uma thread
-        threading.Thread(target=handle_tunnel, args=(sock,)).start()
-        
-        return Response(status=200)
-    except Exception as e:
-        return f"Failed to connect: {str(e)}", 500
-
-def handle_tunnel(sock):
-    # Aqui você deve implementar a lógica para gerenciar a comunicação entre cliente e servidor
-    pass
-
-if __name__ == '__mai__'
-"""
-
-import socket
+import ssl
 
 def start_proxy(port):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
