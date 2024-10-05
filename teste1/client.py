@@ -1,8 +1,7 @@
 import requests
-from flask import Flask
 
 
-proxy_url = '172.17.0.1:8888'
+proxy_url = '172.17.0.1:8080'
 proxies = {
     'http': proxy_url,
     'https': proxy_url,
